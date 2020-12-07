@@ -216,3 +216,187 @@ class Player:
         stringrep += "Stamina:         " + str(self.getstamina()) + "\n"
 
         return stringrep
+
+class Match:
+
+    def __init__(self, p1, p2, numset):
+        """
+        Makes player 1 and player 2 (Both Player Objects)
+        Asks for the user for best of how many sets they want to simulate
+        """
+        self.__player1 = p1
+        self.__player2 = p2
+        self.__setscore = []
+        self.__settowin = numset//2 + 1
+        self.tiebreaker = False
+    def playpoint(self):
+        """
+        Simulate a point between 2 given players
+        """
+
+        DIFFERENCE = 4 #Constant variable to randomize
+        p1total = 0
+        p2total = 0
+
+        p1pforehand = random.randrange(self.__player1.getforehand() - DIFFERENCE, self.__player1.getforehand() + DIFFERENCE)
+        p2pforehand = random.randrange(self.__player2.getforehand() - DIFFERENCE, self.__player2.getforehand() + DIFFERENCE)
+
+        p1pbackhand = random.randrange(self.__player1.getbackhand() - DIFFERENCE, self.__player1.getbackhand() + DIFFERENCE)
+        p2pbackhand = random.randrange(self.__player2.getbackhand() - DIFFERENCE, self.__player2.getbackhand() + DIFFERENCE)
+
+        p1pvolley = random.randrange(self.__player1.getvolley() - DIFFERENCE, self.__player1.getvolley() + DIFFERENCE)
+        p2pvolley = random.randrange(self.__player2.getvolley() - DIFFERENCE, self.__player2.getvolley() + DIFFERENCE)
+
+        p1pserve = random.randrange(self.__player1.getserve() - DIFFERENCE, self.__player1.getserve() + DIFFERENCE)
+        p2pserve = random.randrange(self.__player2.getserve() - DIFFERENCE, self.__player2.getserve() + DIFFERENCE)
+
+        p1pms = random.randrange(self.__player1.getmentalstrength() - DIFFERENCE, self.__player1.getmentalstrength() + DIFFERENCE)
+        p2pms = random.randrange(self.__player2.getmentalstrength() - DIFFERENCE, self.__player2.getmentalstrength() + DIFFERENCE)
+
+        #Makes the highest value 10
+        if p1pforehand > 10:
+            p1pforehand = 10
+        if p2pforehand > 10:
+            p2pforehand = 10
+        if p1pbackhand > 10:
+            p1pbackhand = 10
+        if p2pbackhand > 10:
+            p2pbackhand = 10
+        if p1pvolley > 10:
+            p1pvolley = 10
+        if p2pvolley > 10:
+            p2pvolley = 10
+        if p1pserve > 10:
+            p1pserve = 10
+        if p2pserve > 10:
+            p2pserve = 10
+        if p1pms > 10:
+            p1pms = 10
+        if p2pms > 10:
+            p2pms = 10
+        p1total = p1pforehand + p1pbackhand + p1pvolley + p1pserve + p1pms
+        p2total = p2pforehand + p2pbackhand + p2pvolley + p2pserve + p2pms
+
+        p1total = p1total * (self.__player1.getstamina() / 100)
+        p2total = p2total * (self.__player2.getstamina() / 100)
+
+
+        if not self.tiebreaker:
+            if p1total > p2total: #Determines the winner of the point
+                self.__player1.addpoint()
+                print('Point winner: ', self.__player1.getname())
+            elif p2total > p1total:
+                self.__player2.addpoint()
+                print('Point winner: ', self.__player2.getname())
+            else:
+                self.playpoint()
+        elif self.tiebreaker:
+            if p1total > p2total: #Determines the winner of the point
+                self.__player1.tiebreakpoints +=1
+                print('Point winner: ', self.__player1.getname())
+            elif p2total > p1total:
+                self.__player2.tiebreakpoints +=1
+                print('Point winner: ', self.__player2.getname())
+            else:
+                self.playpoint()
+
+
+
+    def simulatematch(self):
+        """
+        Simulates a match situation between two given players
+        """
+        print('Match is starting...')
+        print('-------------------------------------------------------\n')
+        while self.__player1.getsetswon() != self.__settowin and self.__player2.getsetswon() != self.__settowin:
+            string1 = "{:<15}  |{}|{}|{}".format(self.__player1.getname(), self.__player1.getsetswon(), self.__player1.getgameswon(), self.__player1.getpoints())
+            string2 = "{:<15}  |{}|{}|{}".format(self.__player2.getname(), self.__player2.getsetswon(), self.__player2.getgameswon(), self.__player2.getpoints())
+            print(string1)
+            print(string2)
+            self.playpoint()
+
+            #Below are all the ways for players to win a set
+            #if they win, it resets the amount of points and games they have won
+            if self.__player1.getgameswon() == 6 and self.__player2.getgameswon() <= 4:
+                self.__setscore.append(6)
+                self.__setscore.append(self.__player2.getgameswon())
+                self.__player1.addsetwon()
+                self.__player1.resetgameswon()
+                self.__player2.resetgameswon()
+                self.__player1.setpoint0()
+                self.__player2.setpoint0()
+            elif self.__player2.getgameswon() == 6 and self.__player1.getgameswon() <= 4:
+                self.__setscore.append(self.__player1.getgameswon())
+                self.__setscore.append(6)
+                self.__player2.addsetwon()
+                self.__player1.resetgameswon()
+                self.__player2.resetgameswon()
+                self.__player1.setpoint0()
+                self.__player2.setpoint0()
+            elif self.__player1.getgameswon() == 7 and self.__player2.getgameswon() <= 5:
+                self.__setscore.append(7)
+                self.__setscore.append(self.__player2.getgameswon())
+                self.__player1.addsetwon()
+                self.__player1.resetgameswon()
+                self.__player2.resetgameswon()
+                self.__player1.setpoint0()
+                self.__player2.setpoint0()
+            elif self.__player2.getgameswon() == 7 and self.__player1.getgameswon() <= 5:
+                self.__setscore.append(self.__player1.getgameswon())
+                self.__setscore.append(7)
+                self.__player2.addsetwon()
+                self.__player1.resetgameswon()
+                self.__player2.resetgameswon()
+                self.__player1.setpoint0()
+                self.__player2.setpoint0()
+            elif self.__player2.getgameswon() == 6 and self.__player1.getgameswon() == 6:
+                print("ENTERING A TIEBREAK")
+                print('-------------------\n')
+                self.tiebreaker = True
+                tiebreaktowin = 7
+                while (self.__player1.tiebreakpoints < tiebreaktowin) or (self.__player2.tiebreakpoints < tiebreaktowin):
+                    playpoint()
+                if self.__player1.tiebreakpoints == tiebreaktowin:
+                    self.__setscore.append(7)
+                    self.__setscore.append(6)
+                    self.__player1.tiebreakpoints = 0
+                    self.__player2.tiebreakpoints = 0
+                elif self.__player2.tiebreakpoints == tiebreaktowin:
+                    self.__setscore.append(6)
+                    self.__setscore.append(7)
+                    self.__player1.tiebreakpoints = 0
+                    self.__player2.tiebreakpoints = 0
+                self.__player1.resetgameswon()
+                self.__player2.resetgameswon()
+                self.__player1.setpoint0()
+                self.__player2.setpoint0()
+                self.tiebreaker = False
+
+            #Below are ways to win a game
+            if self.__player1.getpoints() == 4 and self.__player2.getpoints() <= 3:
+                self.__player1.addgame()
+                self.__player1.setpoint0()
+                self.__player2.setpoint0()
+            elif self.__player2.getpoints() == 4 and self.__player1.getpoints() <= 3:
+                self.__player2.addgame()
+                self.__player2.setpoint0()
+                self.__player1.setpoint0()
+
+            print('---------------------------------------------------\n')
+
+        string1 = "{:<15}  |{}|{}|{}".format(self.__player1.getname(), self.__player1.getsetswon(), self.__player1.getgameswon(), self.__player1.getpoints())
+        string2 = "{:<15}  |{}|{}|{}".format(self.__player2.getname(), self.__player2.getsetswon(), self.__player2.getgameswon(), self.__player2.getpoints())
+        print(string1)
+        print(string2)
+
+        #See if a player has won
+        if self.__player1.getsetswon() == self.__settowin:
+            print("The winner is ", self.__player1.getname(), '!!' )
+            print('Score:')
+            for i in range(0, len(self.__setscore), 2):
+                print(self.__setscore[i], '-', self.__setscore[i+1])
+        elif self.__player2.getsetswon() == self.__settowin:
+            print('Score:')
+            print("The winner is ", self.__player2.getname(), '!!' )
+            for i in range(1, len(self.__setscore), 2):
+                print(self.__setscore[i], '-', self.__setscore[i-1])
