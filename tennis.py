@@ -40,6 +40,8 @@ class Player:
         self.__gameswon = 0
         self.__setwon = 0
 
+        self.tiebreakpoints = 0
+
     def setname(self, givenname):
         """
         Method to set the player's name
@@ -202,6 +204,11 @@ class Player:
         """
         return self.__setwon
 
+    def resetset(self):
+        """
+        Method which resets the set won by the player to 0
+        """
+        self.__setwon = 0
     def __str__(self):
         """
         Returns a string representation of a player and its stats
@@ -216,6 +223,7 @@ class Player:
         stringrep += "Stamina:         " + str(self.getstamina()) + "\n"
 
         return stringrep
+
 
 class Match:
 
@@ -253,7 +261,6 @@ class Match:
         p1pms = random.randrange(self.__player1.getmentalstrength() - DIFFERENCE, self.__player1.getmentalstrength() + DIFFERENCE)
         p2pms = random.randrange(self.__player2.getmentalstrength() - DIFFERENCE, self.__player2.getmentalstrength() + DIFFERENCE)
 
-        #Makes the highest value 10
         if p1pforehand > 10:
             p1pforehand = 10
         if p2pforehand > 10:
@@ -284,19 +291,19 @@ class Match:
         if not self.tiebreaker:
             if p1total > p2total: #Determines the winner of the point
                 self.__player1.addpoint()
-                print('Point winner: ', self.__player1.getname())
+                #print('Point winner: ', self.__player1.getname())
             elif p2total > p1total:
                 self.__player2.addpoint()
-                print('Point winner: ', self.__player2.getname())
+                #print('Point winner: ', self.__player2.getname())
             else:
                 self.playpoint()
         elif self.tiebreaker:
             if p1total > p2total: #Determines the winner of the point
                 self.__player1.tiebreakpoints +=1
-                print('Point winner: ', self.__player1.getname())
+                #print('Point winner: ', self.__player1.getname())
             elif p2total > p1total:
                 self.__player2.tiebreakpoints +=1
-                print('Point winner: ', self.__player2.getname())
+                #print('Point winner: ', self.__player2.getname())
             else:
                 self.playpoint()
 
@@ -306,13 +313,14 @@ class Match:
         """
         Simulates a match situation between two given players
         """
+        print('--------------------')
         print('Match is starting...')
-        print('-------------------------------------------------------\n')
+        #print('-------------------------------------------------------\n')
         while self.__player1.getsetswon() != self.__settowin and self.__player2.getsetswon() != self.__settowin:
-            string1 = "{:<15}  |{}|{}|{}".format(self.__player1.getname(), self.__player1.getsetswon(), self.__player1.getgameswon(), self.__player1.getpoints())
-            string2 = "{:<15}  |{}|{}|{}".format(self.__player2.getname(), self.__player2.getsetswon(), self.__player2.getgameswon(), self.__player2.getpoints())
-            print(string1)
-            print(string2)
+            #string1 = "{:<15}  |{}|{}|{}".format(self.__player1.getname(), self.__player1.getsetswon(), self.__player1.getgameswon(), self.__player1.getpoints())
+            #string2 = "{:<15}  |{}|{}|{}".format(self.__player2.getname(), self.__player2.getsetswon(), self.__player2.getgameswon(), self.__player2.getpoints())
+            #print(string1)
+            #print(string2)
             self.playpoint()
 
             #Below are all the ways for players to win a set
@@ -350,22 +358,22 @@ class Match:
                 self.__player1.setpoint0()
                 self.__player2.setpoint0()
             elif self.__player2.getgameswon() == 6 and self.__player1.getgameswon() == 6:
-                print("ENTERING A TIEBREAK")
-                print('-------------------\n')
                 self.tiebreaker = True
                 tiebreaktowin = 7
                 while (self.__player1.tiebreakpoints < tiebreaktowin) or (self.__player2.tiebreakpoints < tiebreaktowin):
-                    playpoint()
+                    self.playpoint()
                 if self.__player1.tiebreakpoints == tiebreaktowin:
                     self.__setscore.append(7)
                     self.__setscore.append(6)
                     self.__player1.tiebreakpoints = 0
                     self.__player2.tiebreakpoints = 0
+                    self.__player1.addsetwon()
                 elif self.__player2.tiebreakpoints == tiebreaktowin:
                     self.__setscore.append(6)
                     self.__setscore.append(7)
                     self.__player1.tiebreakpoints = 0
                     self.__player2.tiebreakpoints = 0
+                    self.__player2.addsetwon()
                 self.__player1.resetgameswon()
                 self.__player2.resetgameswon()
                 self.__player1.setpoint0()
@@ -382,12 +390,13 @@ class Match:
                 self.__player2.setpoint0()
                 self.__player1.setpoint0()
 
-            print('---------------------------------------------------\n')
+            #print('---------------------------------------------------\n')
 
-        string1 = "{:<15}  |{}|{}|{}".format(self.__player1.getname(), self.__player1.getsetswon(), self.__player1.getgameswon(), self.__player1.getpoints())
-        string2 = "{:<15}  |{}|{}|{}".format(self.__player2.getname(), self.__player2.getsetswon(), self.__player2.getgameswon(), self.__player2.getpoints())
-        print(string1)
-        print(string2)
+        #string1 = "{:<15}  |{}|{}|{}".format(self.__player1.getname(), self.__player1.getsetswon(), self.__player1.getgameswon(), self.__player1.getpoints())
+        #string2 = "{:<15}  |{}|{}|{}".format(self.__player2.getname(), self.__player2.getsetswon(), self.__player2.getgameswon(), self.__player2.getpoints())
+        #print(string1)
+        #print(string2)
+
 
         #See if a player has won
         if self.__player1.getsetswon() == self.__settowin:
@@ -395,8 +404,119 @@ class Match:
             print('Score:')
             for i in range(0, len(self.__setscore), 2):
                 print(self.__setscore[i], '-', self.__setscore[i+1])
+            print()
+            self.__player1.setpoint0()
+            self.__player1.resetgameswon()
+            self.__player2.setpoint0()
+            self.__player2.resetgameswon()
+            self.__player1.setpoint0()
+            self.__player2.setpoint0()
+            self.__player1.tiebreakpoints = 0
+            self.__player2.tiebreakpoints = 0
+            self.__player1.resetset()
+            self.__player2.resetset()
+            return self.__player1
         elif self.__player2.getsetswon() == self.__settowin:
             print('Score:')
             print("The winner is ", self.__player2.getname(), '!!' )
             for i in range(1, len(self.__setscore), 2):
                 print(self.__setscore[i], '-', self.__setscore[i-1])
+            print()
+            self.__player1.setpoint0()
+            self.__player1.resetgameswon()
+            self.__player2.setpoint0()
+            self.__player2.resetgameswon()
+            self.__player1.setpoint0()
+            self.__player2.setpoint0()
+            self.__player1.tiebreakpoints = 0
+            self.__player2.tiebreakpoints = 0
+            self.__player1.resetset()
+            self.__player2.resetset()
+            return self.__player2
+
+
+
+#player1 = Player('Charles Dalisay', 6, 8, 5, 10, 3)
+#player2 = Player('Roger Federer', 6, 2, 9, 7, 7)
+#print(player1)
+#print(player2)
+#match1 = Match(player1, player2, 3)
+#match1.simulatematch()
+
+
+def tournament():
+    #An example of a tournament-based simulation
+
+    #Below are creation of players
+    player1 = Player('Charles Dalisay', 6, 8, 5, 5, 3)
+    player2 = Player('Roger Federer', 6, 2, 2, 7, 7)
+    player3 = Player('Francis Tiafoe', 3, 9, 1, 6, 10)
+    player4 = Player('Rafael Nadal', 10, 4, 7, 1,10)
+    player5 = Player('Novak Djokovic', 10, 10, 4, 4, 4)
+    player6 = Player('Nick Kyrgios', 3, 6, 7 ,10, 1)
+    player7 = Player('Danil Medvedev', 4, 7, 4, 1, 10)
+    player8 = Player('Dominic Thiem', 6, 3, 10, 2, 4)
+
+    bracket = [player1, player2, player3, player4, player5, player6, player7, player8] #in a list for seedings purposes
+    print("WELCOME TO THE ANNUAL TENNIS TOURNAMENT")
+    print('The players in this tournament are: ')
+    print('-----------------------------------')
+
+    for i in range(len(bracket)):
+        print(str(i+1), bracket[i])
+
+    #Explanation of the seedings
+    print('The seedings will be (by seedings): ')
+    print('1 v 8              2 v 7')
+    print('     w1v8      w2v7             ')
+    print('        c1  v  c2            ')
+    print('     w4v5      w3v6           ')
+    print('4 v 5              3 v 6')
+
+    print()
+    print()
+    print('QUARTERFINALS') #The first round of the tournament
+    match18 = Match(bracket[0], bracket[7], 5)
+    match27 = Match(bracket[1], bracket[6], 5)
+    match36 = Match(bracket[2], bracket[5], 5)
+    match45 = Match(bracket[3], bracket[4], 5)
+
+    winner18 = match18.simulatematch()
+    winner27 = match27.simulatematch()
+    winner36 = match36.simulatematch()
+    winner45 = match45.simulatematch()
+
+    #Shows who the winners are
+    print('The winner of 1 ', bracket[0].getname(), ' and 8 ', bracket[7].getname(),  ' is ' , winner18.getname())
+    print('The winner of 2 ', bracket[1].getname(), ' and 7 ', bracket[6].getname(),  ' is ' , winner27.getname())
+    print('The winner of 3 ', bracket[2].getname(), ' and 6 ', bracket[5].getname(),  ' is ' , winner36.getname())
+    print('The winner of 4 ', bracket[3].getname(), ' and 5 ', bracket[4].getname(),  ' is ' , winner45.getname())
+
+    print()
+    print()
+    print('SEMIFINALS') #Second round
+    semibracket = [winner18, winner45, winner27, winner36]
+
+    match1845 = Match(winner18, winner45, 5)
+    match2736 = Match(winner27, winner36, 5)
+
+    winner1845 = match1845.simulatematch()
+    winner2736 = match2736.simulatematch()
+    #Shows who the winners are of the second round
+    print('The winner of ', winner18.getname(), ' and ', winner45.getname(),  ' is ' , winner1845.getname())
+    print('The winner of ', winner27.getname(), ' and ', winner36.getname(),  ' is ' , winner2736.getname())
+
+
+    print()
+    print()
+
+
+    finalsmatch = Match(winner1845, winner2736, 5) #Final match
+    tourneywinner = finalsmatch.simulatematch()
+
+
+    print('FINALS')
+    print('The winner of ', winner1845.getname(), ' and ', winner2736.getname(),  ' is ' , tourneywinner.getname())
+    print(tourneywinner.getname(), 'is the winner of this tournament!') #Shows who the winner is of the whole tournament
+
+tournament()#calls the tournament function
