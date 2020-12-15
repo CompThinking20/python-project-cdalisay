@@ -2,3 +2,13 @@ This looks great so far. There is a way to simplify this class, so that you don'
 
 MILESTONE 2 COMMENTS
 I really have nothing to add here: there are no obvious errors, and it looks like generally clean and thoughtful code. As I said in my previous comments, there are definitely ways to reduce some typing—and therefore potential for bugs—but that's a minor quibble given the scope of the project. For you final submission: get some players playing!
+
+
+Projective Overview
+My project overview was just a simple text-based tennis simulation. I managed to complete a small tournament-style, sort of what a small ATP tournament looks like, or the small portion of the grandslam tournaments.
+
+Project Narrative
+For me to reach Milestone 1 and Milestone 2, I had to envision what tennis mechanism would look like on a game. I  had to cut it piece by piece, and so I thought about creating the player first before creating the game on the first milestone. I thought about what the important attributes that I should include in a player. I also thought ahead of how I could implement that in a match-type simulation. On milestone 2, I had to start small and work my way up on a full match. I created a point-simulation first and then I created a game simulation, then a set, then a full match. The lessons about classes and methods were a big part of my project, as that helped me start small and keep adding onto it, which made creating a big project like this easier. I was surprised that I didn't encounter a big problem, as usually on big projects like this, I come across one major bug. I don't think I'd approach this project differently if I had to start from scratch.
+
+Correction
+You suggested to shorten and simplify my player class. I figured you meant by making the instances public, but I decided against that even though it would've saved me probably a 100 lines of code due to the fact that I want to get used to using encapsulation. Besides that, I didn't really come across any major bugs, and the process went smoothly. 
